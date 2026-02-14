@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>foresee 记事本</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    body {
+        background-color: #f5f7fa;
+        padding: 40px 20px;
+        min-height: 100vh;
+    }
+
+    .app {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 标题 */
+    .title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .app input {
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 25px;
+        border: 1px solid #e6e6e6;
+        border-radius: 8px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+    .app input:focus {
+        border-color: #409eff;
+        box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.1);
+    }
+
+    .task-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 16px;
+        color: #303133;
+        padding: 12px 15px;
+        margin: 8px 0;
+        background-color: #f8f9fa;
+        border-left: 4px solid #409eff;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .task-item:hover {
+        background-color: #eef5ff;
+        transform: translateX(5px);
+    }
+
+    .delete-btn {
+        color: #f56c6c;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .task-item:hover .delete-btn {
+        opacity: 1;
+    }
+
+    .delete-btn:hover {
+        color: #e45656;
+    }
+
+    /* 底部栏：统计 + 清空按钮 */
+    .task-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    .task-count {
+        color: #606266;
+        font-size: 14px;
+    }
+
+    .clear-all-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        background-color: #f56c6c;
+        color: #ffffff;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .clear-all-btn:hover {
+        background-color: #e45656;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 480px) {
+        .app {
+            padding: 20px;
+        }
+        .task-footer {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .clear-all-btn {
+            margin-top: 10px;
+            width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div id="app" class="app">
+    <!-- 标题 -->
+    <div class="title">foresee 的记事本</div>
+
+    <input 
+        v-model="inputTask" 
+        type="text" 
+        placeholder="请输入任务"
+        @keyup.enter="addTaskByEnter"
+    >
+  
+    <div class="task-list">
+        <div 
+            class="task-item" 
+            v-for="(item, index) in taskList" 
+            :key="index"
+        >
+            <span>{{index + 1}}. {{item}}</span>
+            <span class="delete-btn" @click="deleteSingleTask(index)">×</span>
+        </div>
+    </div>
+
+    <!-- 有任务才显示底部栏 -->
+    <div class="task-footer" v-if="taskList.length > 0">
+        <div class="task-count">共计 {{taskList.length}} 个任务</div>
+        <button class="clear-all-btn" @click="clearAllTasks">Clear</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+var app = new Vue({
+    el: "#app",
+    methods: {
+        addTaskByEnter() {
+            const task = this.inputTask.trim();
+            if (!task) {
+                alert("请输入有效的任务内容！");
+                return;
+            }
+            this.taskList.push(task);
+            this.inputTask = "";
+        },
+        deleteSingleTask(index) {
+            this.taskList.splice(index, 1);
+        },
+        clearAllTasks() {
+            if (confirm("确定要清除所有任务吗？")) {
+                this.taskList = [];
+            }
+        }
+    },
+    data: {
+        inputTask: "",
+        taskList: ["吃饭", "睡觉", "学习"]
+    }
+})
+</script>
+</body>
+</html>
